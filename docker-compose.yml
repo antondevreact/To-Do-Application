@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: todo-next-app
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/todo-app
+      - JWT_ACCESS_SECRET=jwt-secret-key
+      - JWT_REFRESH_SECRET=jwt-refresh-secret-key
+      - API_URL=/api
+    depends_on:
+      - mongo
+    networks:
+      - todo-network
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo-db
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - todo-network
+
+volumes:
+  mongo-data:
+
+networks:
+  todo-network:
+    driver: bridge
